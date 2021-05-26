@@ -14,13 +14,11 @@ module.exports = async (token, url, endpoint, service, forceUpdate) => {
                 "Authorization": "Bearer " + token
             },
             body: JSON.stringify((() => {
-                const obj = {
-                    ...service.Spec
-                };
+                const obj = JSON.parse(JSON.stringify(service.Spec));
 
-                if (obj.TaskTemplate && service.PreviousSpec && service.PreviousSpec.TaskTemplate) {
-                    obj.TaskTemplate.ForceUpdate = typeof service.PreviousSpec.TaskTemplate.ForceUpdate === "number"
-                        ? service.PreviousSpec.TaskTemplate.ForceUpdate + 1
+                if (obj.TaskTemplate && service.Spec && service.Spec.TaskTemplate) {
+                    obj.TaskTemplate.ForceUpdate = typeof service.Spec.TaskTemplate.ForceUpdate === "number"
+                        ? service.Spec.TaskTemplate.ForceUpdate + 1
                         : 1;
                 }
 
