@@ -12,8 +12,8 @@ module.exports = async (token, url, stack, endpoint, composeFile, swarmId = "") 
                 "Authorization": "Bearer " + token
             },
             body: JSON.stringify({
-                Name: stack,
-                StackFileContent: compose,
+                name: stack,
+                stackFileContent: compose,
                 ...(swarmId ? { swarmId } : {})
             })
         }, (err, response, body) => {
