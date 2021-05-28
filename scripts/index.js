@@ -6,6 +6,7 @@ module.exports = {
     Help: require("./help"),
     GetStackByName: require("./getStacks"),
     GetEndpointByName: require("./getEndpoint"),
+    GetSwarm: require("./getSwarm"),
     GetServices: require("./getServices"),
     CheckUrl: require("./checkURL")
 };
