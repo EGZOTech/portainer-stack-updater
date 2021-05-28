@@ -19,6 +19,7 @@ const execute = async () => {
             "--update": Boolean,
             "--include-services": Boolean,
             "--pull": Boolean,
+            "--deploy-compose": Boolean,
             "-h": "--help",
             "-e": "--env",
             "-p": "--project",
@@ -68,7 +69,14 @@ const execute = async () => {
             }
 
             console.info(`Deploy ${args["--project"]} as new project`);
-            stack = await Script.Deploy(auth.jwt, url, args["--project"], args["--endpoint"], args["--compose"]);
+
+            if (args["--deploy-compose"]) {
+                stack = await Script.Deploy(auth.jwt, url, args["--project"], args["--endpoint"], args["--compose"]);
+            }
+            else {
+                const swarm = await Script.GetSwarm(auth.jwt, url, args["--endpoint"]);
+                stack = await Script.Deploy(auth.jwt, url, args["--project"], args["--endpoint"], args["--compose"], swarm.ID);
+            }
         } else  {
             if (!updateOnly) {
                 console.info(`Updating ${args["--project"]}...`);
