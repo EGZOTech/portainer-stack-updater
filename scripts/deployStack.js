@@ -1,12 +1,12 @@
 const request = require("request");
 const fs = require("fs");
 
-module.exports = async (token, url, stack, endpoint, composeFile) => {
+module.exports = async (token, url, stack, endpoint, composeFile, deployType = "swarm") => {
     return new Promise((resolve, reject) => {
         const compose = fs.readFileSync(composeFile, {encoding: "utf8"});
         request({
             method: "POST",
-            uri:  url + `/stacks?endpointId=${endpoint}&type=2&method=string`,
+            uri:  url + `/stacks?endpointId=${endpoint}&type=${deployType === "swarm" ? 1 : 2}&method=string`,
             headers: {
                 "content-type": "application/json",
                 "Authorization": "Bearer " + token
