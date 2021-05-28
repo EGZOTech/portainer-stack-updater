@@ -17,6 +17,7 @@ const execute = async () => {
             "--compose": String,
             "--endpoint": String,
             "--update": Boolean,
+            "--include-services": Boolean,
             "--pull": Boolean,
             "-h": "--help",
             "-e": "--env",
@@ -48,6 +49,7 @@ const execute = async () => {
     let stackID = undefined;
     let deploy = false;
     let updateOnly = args["--update"];
+    let includeServices = updateOnly || args["--include-services"];
 
     try {
         console.info(`Check if ${args["--project"]} already exists`);
@@ -59,32 +61,34 @@ const execute = async () => {
     let stack = undefined;
 
     try {
-        if (updateOnly) {
-            if (deploy) {
+        if(deploy) {
+            if (updateOnly) {
                 console.error(`Stack ${args["--project"]} cannot be updated because it does not exists`);
                 process.exit(1);
             }
 
-            console.info(`Updating ${args["--project"]} and its services ...`);
-
-            const services = await Script.GetServices(auth.jwt, url, args["--endpoint"], args["--project"]);
-
-            for (const service of services) {
-                console.info(`Updating ${args["--project"]} service ${service.ID} ...`);
-                const result = await Script.UpdateService(auth.jwt, url, args["--endpoint"], service, args["--pull"]);
-
-                if (typeof result === "object" && result.Warnings) {
-                    console.info(`Service ${service.ID} update warnings:`);
-                    console.info(result);
-                }
-            }
-        }
-        else if(deploy) {
             console.info(`Deploy ${args["--project"]} as new project`);
             stack = await Script.Deploy(auth.jwt, url, args["--project"], args["--endpoint"], args["--compose"]);
         } else  {
-            console.info(`Updating ${args["--project"]}...`);
-            stack = await Script.Update(auth.jwt, url, stackID, args["--endpoint"], args["--compose"]);
+            if (!updateOnly) {
+                console.info(`Updating ${args["--project"]}...`);
+                stack = await Script.Update(auth.jwt, url, stackID, args["--endpoint"], args["--compose"]);
+            }
+
+            if (includeServices) {
+                console.info(`Updating ${args["--project"]} services...`);
+                const services = await Script.GetServices(auth.jwt, url, args["--endpoint"], args["--project"]);
+
+                for (const service of services) {
+                    console.info(`Updating ${args["--project"]} service ${service.ID} ...`);
+                    const result = await Script.UpdateService(auth.jwt, url, args["--endpoint"], service, args["--pull"]);
+
+                    if (typeof result === "object" && result.Warnings) {
+                        console.info(`Service ${service.ID} update warnings:`);
+                        console.info(result);
+                    }
+                }
+            }
         }
     } catch(err) {
         console.error(err);
