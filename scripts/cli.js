@@ -16,6 +16,7 @@ const execute = async () => {
             "--portainersystem": String,
             "--user": String,
             "--password": String,
+            "--key": String,
             "--compose": String,
             "--endpoint": String,
             "--update": Boolean,
@@ -43,10 +44,10 @@ const execute = async () => {
     if(!args["--endpoint"]) args["--endpoint"] = "1";
 
     console.info(`Authenticating against ${url}`);
-    const auth = await Script.Auth(args["--user"], args["--password"], url);
+    const auth = args["--key"] ? { key: args["--key"] } : await Script.Auth(args["--user"], args["--password"], url);
 
     if (isNaN(parseInt(args["--endpoint"]))) {
-        args["--endpoint"] = Script.GetEndpointByName(auth.jwt, url, args["--endpoint"]).Id;
+        args["--endpoint"] = Script.GetEndpointByName(auth, url, args["--endpoint"]).Id;
     }
 
     let stackID = undefined;
@@ -58,7 +59,7 @@ const execute = async () => {
 
     try {
         console.info(`Check if ${stackName} already exists`);
-        stackID = await Script.GetStackByName(auth.jwt, url, stackName);
+        stackID = await Script.GetStackByName(auth, url, stackName);
     } catch(err) {
         deploy = true;
     }
@@ -75,18 +76,18 @@ const execute = async () => {
             console.info(`Deploy ${stackName} as new project`);
 
             if (args["--deploy-compose"]) {
-                stack = await Script.Deploy(auth.jwt, url, stackName, args["--endpoint"], args["--compose"]);
+                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"]);
             }
             else {
-                const swarm = await Script.GetSwarm(auth.jwt, url, args["--endpoint"]);
-                stack = await Script.Deploy(auth.jwt, url, stackName, args["--endpoint"], args["--compose"], swarm.ID);
+                const swarm = await Script.GetSwarm(auth, url, args["--endpoint"]);
+                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"], swarm.ID);
             }
-        } 
+        }
         else {
             const serviceName = args["--service"];
 
             if (serviceName) {
-                const services = await Script.GetServices(auth.jwt, url, args["--endpoint"], stackName);
+                const services = await Script.GetServices(auth, url, args["--endpoint"], stackName);
                 const service = services.find(v => v.Spec.Name === serviceName);
 
                 if (!service) {
@@ -95,7 +96,7 @@ const execute = async () => {
                 }
 
                 console.info(`Updating service ${stackName}`);
-                const result = await Script.UpdateService(auth.jwt, url, args["--endpoint"], service, args["--pull"]);
+                const result = await Script.UpdateService(auth, url, args["--endpoint"], service, args["--pull"]);
 
                 if (typeof result === "object" && result.Warnings) {
                     console.warn(`Service ${service.ID} update warnings:`);
@@ -105,16 +106,16 @@ const execute = async () => {
             else {
                 if (!updateOnly) {
                     console.info(`Updating ${stackName}...`);
-                    stack = await Script.Update(auth.jwt, url, stackID, args["--endpoint"], args["--compose"]);
+                    stack = await Script.Update(auth, url, stackID, args["--endpoint"], args["--compose"]);
                 }
 
                 if (includeServices) {
                     console.info(`Updating ${stackName} services...`);
-                    const services = await Script.GetServices(auth.jwt, url, args["--endpoint"], stackName);
+                    const services = await Script.GetServices(auth, url, args["--endpoint"], stackName);
 
                     for (const service of services) {
                         console.info(`Updating ${stackName} service ${service.ID} ...`);
-                        const result = await Script.UpdateService(auth.jwt, url, args["--endpoint"], service, args["--pull"]);
+                        const result = await Script.UpdateService(auth, url, args["--endpoint"], service, args["--pull"]);
 
                         if (typeof result === "object" && result.Warnings) {
                             console.warn(`Service ${service.ID} update warnings:`);

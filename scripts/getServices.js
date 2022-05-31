@@ -1,5 +1,6 @@
 const request = require("request");
 const _ = require("lodash");
+const generateAuthHeaders = require("./generateAuthHeaders");
 
 module.exports = async (token, url, endpointId, stackName) => {
     return new Promise((resolve, reject) => {
@@ -13,7 +14,7 @@ module.exports = async (token, url, endpointId, stackName) => {
             uri:  url + `/endpoints/${endpointId}/docker/services?${params.toString()}`,
             headers: {
                 "content-type": "application/json",
-                "Authorization": "Bearer " + token
+                ...generateAuthHeaders(token)
             },
         }, (err, response, body) => {
             if(err) return reject(err);

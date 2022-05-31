@@ -1,5 +1,6 @@
 const request = require("request");
 const fs = require("fs");
+const generateAuthHeaders = require("./generateAuthHeaders");
 
 module.exports = async (token, url, endpoint, service, forceUpdate) => {
     return new Promise((resolve, reject) => {
@@ -11,7 +12,7 @@ module.exports = async (token, url, endpoint, service, forceUpdate) => {
             uri:  url + `/endpoints/${endpoint}/docker/services/${service.ID}/update?${params.toString()}`,
             headers: {
                 "content-type": "application/json",
-                "Authorization": "Bearer " + token
+                ...generateAuthHeaders(token)
             },
             body: JSON.stringify((() => {
                 const obj = JSON.parse(JSON.stringify(service.Spec));

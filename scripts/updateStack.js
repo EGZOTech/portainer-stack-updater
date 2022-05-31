@@ -1,5 +1,6 @@
 const request = require("request");
 const fs = require("fs");
+const generateAuthHeaders = require("./generateAuthHeaders");
 
 module.exports = async (token, url, stack, endpoint, composeFile) => {
     return new Promise((resolve, reject) => {
@@ -9,7 +10,7 @@ module.exports = async (token, url, stack, endpoint, composeFile) => {
             uri:  url + `/stacks/${stack}?endpointId=${endpoint}`,
             headers: {
                 "content-type": "applocation/json",
-                "Authorization": "Bearer " + token
+                ...generateAuthHeaders(token)
             },
             body: JSON.stringify({
                 StackFileContent: compose

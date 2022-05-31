@@ -1,5 +1,6 @@
 const request = require("request");
 const _ = require("lodash");
+const generateAuthHeaders = require("./generateAuthHeaders");
 
 module.exports = async (token, url, endpointName) => {
     return new Promise((resolve, reject) => {
@@ -8,7 +9,7 @@ module.exports = async (token, url, endpointName) => {
             uri:  url + "/endpoints",
             headers: {
                 "content-type": "application/json",
-                "Authorization": "Bearer " + token
+                ...generateAuthHeaders(token)
             },
         }, (err, response, body) => {
             if(err) return reject(err);

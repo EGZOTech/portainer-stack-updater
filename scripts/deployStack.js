@@ -1,5 +1,6 @@
 const request = require("request");
 const fs = require("fs");
+const generateAuthHeaders = require("./generateAuthHeaders");
 
 module.exports = async (token, url, stack, endpoint, composeFile, swarmId = "") => {
     return new Promise((resolve, reject) => {
@@ -9,7 +10,7 @@ module.exports = async (token, url, stack, endpoint, composeFile, swarmId = "") 
             uri:  url + `/stacks?endpointId=${endpoint}&type=${swarmId ? 1 : 2}&method=string`,
             headers: {
                 "content-type": "application/json",
-                "Authorization": "Bearer " + token
+                ...generateAuthHeadershHeaders(token)
             },
             body: JSON.stringify({
                 env: [],
