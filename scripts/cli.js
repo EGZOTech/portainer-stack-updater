@@ -76,11 +76,11 @@ const execute = async () => {
             console.info(`Deploy ${stackName} as new project`);
 
             if (args["--deploy-compose"]) {
-                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"]);
+                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"], "", args["--env"].split(","));
             }
             else {
                 const swarm = await Script.GetSwarm(auth, url, args["--endpoint"]);
-                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"], swarm.ID);
+                stack = await Script.Deploy(auth, url, stackName, args["--endpoint"], args["--compose"], swarm.ID, args["--env"].split(","));
             }
         }
         else {

@@ -46,13 +46,15 @@ npx portainer-update -p <Stackname> -u <Portainer Username> --password <Portaine
 
 |Parameter|Name|Description|Required|
 |:--:|--|:--|:--:|
-|-h \| --help|Help|Show this parameter table||
-|-e \| --env|Envrionment|At the moment this parameter has no effect||
-|-p \| --project|Stackname|The name of the stack you want to update|**X**|
-|-u \| --user|Portainer Username|The username of the user which will update the stack ==The user need the permission to edit the stack==|**X**|
-|--password|Portainer Password|This tool is for use in CiCD pipelines so please provide the password as a secret variable|**X**|
-|-f \| --compose|Path to compose|Fill in the path to the compose file, which you want to deploy|If not using `--update`|
-|-s \| --portainersystem|Portainer API URL|The address where to find portainer API (The url you are browsing to in your browser)|Default value: `http://localhost:9000`|
-|--endpoint|Endpoint ID|The id of the endpoint where the stack should be deployed|Default value: `1`|
-| --update|Perform stack and services update|Updates a stack and all of its services. Allow only for updating a stack if it exists. Do not create new stack.||
-| --pull|When performing an `--update` pulls newest images from the repository||
+|`-h` \| `--help`|Help|Show this parameter table||
+|`-e` \| `--env`|Environment|Pasess specified environment variables to deploy (comma separated, variable names only, value is passed through).||
+|`-p` \| `--project`\| `--stack`|Stackname|The name of the stack you want to update|**X**|
+|`--key`|Authorization key|Specifies the key that will be used for authorization||
+|`-u` \| `--user`|Portainer Username|The username of the user which will update the stack ==The user need the permission to edit the stack==|If not using `--key`|
+|`--password`|Portainer Password|This tool is for use in CiCD pipelines so please provide the password as a secret variable|If not using `--key`|
+|`-f` \| `--compose`|Path to compose|Fill in the path to the compose file, which you want to deploy|If not using `--update`|
+|`-s` \| `--portainersystem`|Portainer API URL|The address where to find portainer API (The url you are browsing to in your browser)|**X**</br> Default value: `http://localhost:9000`|
+|`--endpoint`|Endpoint ID|The id of the endpoint where the stack should be deployed|Default value: `1`|
+|`--service`|Service ID|The id of the service which should be updated||
+|`--update`|Perform stack and services update|Updates a stack and all of its services. Allow only for updating a stack if it exists. Do not create new stack.||
+|`--pull`|Pull newest images|When performing an `--update` pulls newest images from the repository||
