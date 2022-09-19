@@ -10,7 +10,7 @@ module.exports = async (token, url, stack, endpoint, composeFile, swarmId = "", 
             uri:  url + `/stacks?endpointId=${endpoint}&type=${swarmId ? 1 : 2}&method=string`,
             headers: {
                 "content-type": "application/json",
-                ...generateAuthHeadershHeaders(token)
+                ...generateAuthHeaders(token)
             },
             body: JSON.stringify({
                 env: environmentVariables.map(envVar => ({
