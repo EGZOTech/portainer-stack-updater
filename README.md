@@ -58,3 +58,4 @@ npx portainer-update -p <Stackname> -u <Portainer Username> --password <Portaine
 |`--service`|Service ID|The id of the service which should be updated||
 |`--update`|Perform stack and services update|Updates a stack and all of its services. Allow only for updating a stack if it exists. Do not create new stack.||
 |`--pull`|Pull newest images|When performing an `--update` pulls newest images from the repository||
+|`--delete`|Deletes a stack|Tries to delete specified stack||

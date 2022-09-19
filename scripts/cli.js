@@ -20,6 +20,7 @@ const execute = async () => {
             "--compose": String,
             "--endpoint": String,
             "--update": Boolean,
+            "--delete": Boolean,
             "--include-services": Boolean,
             "--pull": Boolean,
             "--deploy-compose": Boolean,
@@ -52,6 +53,7 @@ const execute = async () => {
 
     let stackID = undefined;
     let deploy = false;
+    let shouldDelete = args["--delete"];
     let updateOnly = args["--update"];
     let includeServices = updateOnly || args["--include-services"];
 
@@ -67,7 +69,16 @@ const execute = async () => {
     let stack = undefined;
 
     try {
-        if(deploy) {
+        if (shouldDelete) {
+            if (deploy) {
+                console.error(`Stack ${stackName} cannot be deleted because it does not exist`);
+                process.exit(1);
+            }
+
+            console.info(`Deleting stack ${stackName}`);
+            await Script.Delete(auth, url, stackID, args["--endpoint"]);   
+        }
+        else if(deploy) {
             if (updateOnly) {
                 console.error(`Stack ${stackName} cannot be updated because it does not exist`);
                 process.exit(1);
@@ -95,7 +106,7 @@ const execute = async () => {
                     process.exit(2);
                 }
 
-                console.info(`Updating service ${stackName}`);
+                console.info(`Updating service ${service.Spec.Name} in stack ${stackName}`);
                 const result = await Script.UpdateService(auth, url, args["--endpoint"], service, args["--pull"]);
 
                 if (typeof result === "object" && result.Warnings) {
@@ -105,12 +116,12 @@ const execute = async () => {
             }
             else {
                 if (!updateOnly) {
-                    console.info(`Updating ${stackName}...`);
+                    console.info(`Updating stack ${stackName}...`);
                     stack = await Script.Update(auth, url, stackID, args["--endpoint"], args["--compose"]);
                 }
 
                 if (includeServices) {
-                    console.info(`Updating ${stackName} services...`);
+                    console.info(`Updating stack ${stackName} services...`);
                     const services = await Script.GetServices(auth, url, args["--endpoint"], stackName);
 
                     for (const service of services) {

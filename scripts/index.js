@@ -1,6 +1,7 @@
 module.exports = {
     Auth: require("./auth"),
     Deploy: require("./deployStack"),
+    Delete: require("./deleteStack"),
     Update: require("./updateStack"),
     UpdateService: require("./updateService"),
     Help: require("./help"),
