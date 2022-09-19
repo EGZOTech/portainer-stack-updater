@@ -12,7 +12,7 @@ module.exports = async (token, url, stack, endpoint) => {
             },
         }, (err, response, body) => {
             if(err) return reject(err);
-            if (response.statusCode !== 200) return reject(body);
+            if (response.statusCode >= 300) return reject(body);
             if(body.err) return reject(body.err);
             return resolve(body);
         });
