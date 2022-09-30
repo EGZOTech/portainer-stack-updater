@@ -13,7 +13,9 @@ module.exports = async (token, url, stack, endpoint, composeFile) => {
                 ...generateAuthHeaders(token)
             },
             body: JSON.stringify({
-                StackFileContent: compose
+                prune: true,
+                pullImage: true,
+                stackFileContent: compose
             })
         }, (err, response, body) => {
             if(err) return reject(err);
