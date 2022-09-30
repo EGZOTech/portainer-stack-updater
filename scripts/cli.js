@@ -24,6 +24,7 @@ const execute = async () => {
             "--include-services": Boolean,
             "--pull": Boolean,
             "--deploy-compose": Boolean,
+            "--only-pull-image": String,
             "-h": "--help",
             "-e": "--env",
             "-p": "--project",
@@ -51,6 +52,18 @@ const execute = async () => {
         args["--endpoint"] = Script.GetEndpointByName(auth, url, args["--endpoint"]).Id;
     }
 
+    if (args["--only-pull-image"]) {
+        try {
+            const result = await Script.PullImage(auth, url, args["--endpoint"], args["--only-pull-image"]);
+            console.info(JSON.stringify(result));
+            process.exit(0);
+        }
+        catch(ex) {
+            console.error(`Failed pulling image: ${args["--only-pull-image"]} with error: ${ex instanceof Error ? ex.message : ex.toString() }`);
+            process.exit(1);
+        }
+    }
+
     let stackID = undefined;
     let deploy = false;
     let shouldDelete = args["--delete"];
@@ -76,7 +89,7 @@ const execute = async () => {
             }
 
             console.info(`Deleting stack ${stackName}`);
-            await Script.Delete(auth, url, stackID, args["--endpoint"]);   
+            await Script.Delete(auth, url, stackID, args["--endpoint"]);
         }
         else if(deploy) {
             if (updateOnly) {

@@ -9,5 +9,6 @@ module.exports = {
     GetEndpointByName: require("./getEndpoint"),
     GetSwarm: require("./getSwarm"),
     GetServices: require("./getServices"),
-    CheckUrl: require("./checkURL")
+    CheckUrl: require("./checkURL"),
+    PullImage: require("./pullImage")
 };
