@@ -2,7 +2,7 @@ const request = require("request");
 const fs = require("fs");
 const generateAuthHeaders = require("./generateAuthHeaders");
 
-module.exports = async (token, url, stack, endpoint, composeFile) => {
+module.exports = async (token, url, stack, endpoint, composeFile, environmentVariables = []) => {
     return new Promise((resolve, reject) => {
         const compose = fs.readFileSync(composeFile, {encoding: "utf8"});
         request({
@@ -13,6 +13,10 @@ module.exports = async (token, url, stack, endpoint, composeFile) => {
                 ...generateAuthHeaders(token)
             },
             body: JSON.stringify({
+                env: environmentVariables.map(envVar => ({
+                    name: envVar,
+                    value: process.env[envVar]
+                })),
                 prune: true,
                 pullImage: true,
                 stackFileContent: compose

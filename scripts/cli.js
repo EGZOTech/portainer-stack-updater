@@ -130,7 +130,7 @@ const execute = async () => {
             else {
                 if (!updateOnly) {
                     console.info(`Updating stack ${stackName}...`);
-                    stack = await Script.Update(auth, url, stackID, args["--endpoint"], args["--compose"]);
+                    stack = await Script.Update(auth, url, stackID, args["--endpoint"], args["--compose"], args["--env"].split(","));
                 }
 
                 if (includeServices) {
